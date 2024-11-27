@@ -1,0 +1,38 @@
+{
+  "webhookUrl": "https://discord.com/api/webhooks/1290060651909353575/PSjK0YRYczpLW_G8QDPBg13qupmksM6iMMmi-vl9d9FmcBpHiZxrozny8wLwapac9mNP",
+  "mysql": {
+      "host": "91.218.64.199",
+      "user": "NurKai_OPIBot",
+      "password": "Jb80s_pe8brRJo1cc",
+      "database": "NurKai_OPIBot"
+  },
+  "messages": {
+      "noperms": "[Bot] Du hast keine Rechte dafür!",
+      "tpa_send": "[Bot] TPA-Anfrage gesendet an ${username}.",
+      "invalid_amount": "[Bot] Der Betrag muss größer als 0 sein!",
+      "reconnect": "[CONNECT] Verbindung wurde getrennt. Versuche erneut, den Bot zu verbinden...",
+      "shutdown": "[CONNECT] Bot wird heruntergefahren...",
+      "discord": "[Bot] Unser Discord: xxx.de",
+      "payment_success": "[Bot] Zahlung von $${amount} an ${targetUsername} erfolgreich.",
+      "payment_pending": "[Bot] Deine Zahlung von $${amount} an ${targetUsername} muss mit dem Befehl \"!pay ${targetUsername} ${amount} confirm\" bestätigt werden.",
+      "payment_confirm_success": "[Bot] Zahlung von $${confirmAmount} an ${confirmTarget} erfolgreich bestätigt.",
+      "payment_failed_remove": "[Bot] Fehler beim Abziehen des Betrags.",
+      "balance_not_enough": "[Bot] Nicht genug Guthaben! Verfügbares Guthaben: ${balance}.",
+      "payment_invaild_nummer": "[Bot] Der Bot hat nicht genügend Geld!",
+      "payment_confirmation_invalid": "[Bot] Bestätigung ungültig. Bitte stelle sicher, dass du den richtigen Betrag und Spieler angegeben hast.",
+      "no_command": "[Bot] Bei Fragen irgendwas änder danke!"
+  },
+  "home": {
+    "home": "home"
+  },
+  "authorizedUsers": [
+      {
+          "uuid": "0a38c69c07a2462f9697b6e5e167b84e",
+          "username": "NurKai_"
+      },
+      {
+          "uuid": "UUID_DES_BENUTZERS_2",
+          "username": "Benutzername2"
+      }
+  ]
+}

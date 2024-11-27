@@ -144,8 +144,8 @@ function createOPIBot() {
                 const amount = parseInt(payMatch[2]); // Betrag
                 console.log(`[BOT] !pay erkannt: Zielspieler - ${targetUsername}, Betrag - ${amount}`); // Debugging
 
-                //Message replace
-
+                //Message replac
+ 
 
                 const paymentPendingMessage = config.messages.payment_pending
                 .replace("${amount}", amount)       // Betrag ersetzen

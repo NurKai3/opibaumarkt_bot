@@ -125,7 +125,11 @@ function createOPIBot() {
 
             if (tpaRegex.test(message)) {
                 bot.chat(`/tpa ${username}`);
-                bot.chat(`/msg ${username} ${tpaMessage}`);
+                if(message.includes('Dieser Spieler ist nicht auf CityBuild online.')) {
+                    bot.chat(`/msg ${username} ${config.messages.player_not_online}`);
+                } else {
+                    bot.chat(`/msg ${username} ${tpaMessage}`);
+                }
                 console.log(`[BOT] ${tpaMessage}`);
             }
 
@@ -163,8 +167,13 @@ function createOPIBot() {
                         // Zahlung speichern und auf Bestätigung warten
                         pendingPayments[username] = { targetUsername, amount }; 
                         bot.chat(`/pay ${targetUsername} ${amount}`);
-                        bot.chat(`/msg ${username} [Bot] ${paymentPendingMessage}`);
-                        console.log(`[BOT] Zahlung für ${username} wird mit Bestätigung abgewartet: /pay ${targetUsername} ${amount} confirm`);
+                        if(message.includes('Dieser Spieler ist nicht auf CityBuild online.')) {
+                            bot.chat(`/msg ${username} ${config.messages.player_not_online}`);
+                        } else {
+                            bot.chat(`/msg ${username} [Bot] ${paymentPendingMessage}`);
+                            console.log(`[BOT] Zahlung für ${username} wird mit Bestätigung abgewartet: /pay ${targetUsername} ${amount} confirm`);
+                        }
+                        
                     } else {
                         // Normale Zahlung ohne Bestätigung
                         getBalance(balance => {
@@ -173,9 +182,13 @@ function createOPIBot() {
                                 updateBalance(amount, 'subtract', success => {
                                     if (success) {
                                         bot.chat(`/pay ${targetUsername} ${amount}`);
-                                        bot.chat(`/msg ${username} ${paymentSuccessMessage}`);
-                                        sendDiscordLog(`${username} hat an ${targetUsername} $${amount} ausgezahlt.`, 'Zahlungsausgang', 0xFF0000, targetUsername);
-                                        console.log(`[BOT] ${username} hat ${amount} an ${targetUsername} gezahlt.`);
+                                        if(message.includes('Dieser Spieler ist nicht auf CityBuild online.')) {
+                                            bot.chat(`/msg ${username} ${config.messages.player_not_online}`);
+                                        } else {
+                                            bot.chat(`/msg ${username} ${paymentSuccessMessage}`);
+                                            sendDiscordLog(`${username} hat an ${targetUsername} $${amount} ausgezahlt.`, 'Zahlungsausgang', 0xFF0000, targetUsername);
+                                            console.log(`[BOT] ${username} hat ${amount} an ${targetUsername} gezahlt.`);
+                                        }
                                     } else {
                                         bot.chat(`/msg ${username} ${config.messages.payment_failed_remove}`);
                                     }
@@ -214,11 +227,17 @@ function createOPIBot() {
                                 if (success) {
                                     // Zahlung ausführen
                                     bot.chat(`/pay ${confirmTarget} ${confirmAmount} confirm`);
-                                    bot.chat(`/msg ${username} ${paymentConfirmMessage}`);
-                                    sendDiscordLog(`${username} hat die Zahlung an ${confirmTarget} über $${confirmAmount} bestätigt.`, 'Zahlungsausgang', 0x00FF00, confirmTarget);
-                                    console.log(`[BOT] ${username} hat die Zahlung an ${confirmTarget} über $${confirmAmount} bestätigt.`);
-                                    // Nach Bestätigung löschen wir den ausstehenden Zahlungseintrag
-                                    delete pendingPayments[username];
+                                    if(message.includes('Dieser Spieler ist nicht auf CityBuild online.')) {
+                                        bot.chat(`/msg ${username} ${config.messages.player_not_online}`);
+                                        delete pendingPayments[username];
+                                    } else {
+                                        bot.chat(`/msg ${username} ${paymentConfirmMessage}`);
+                                        sendDiscordLog(`${username} hat die Zahlung an ${confirmTarget} über $${confirmAmount} bestätigt.`, 'Zahlungsausgang', 0x00FF00, confirmTarget);
+                                        console.log(`[BOT] ${username} hat die Zahlung an ${confirmTarget} über $${confirmAmount} bestätigt.`);
+                                        // Nach Bestätigung löschen wir den ausstehenden Zahlungseintrag
+                                        delete pendingPayments[username];
+                                    }
+                                    
                                 } else {
                                     bot.chat(`/msg ${username} ${config.messages.payment_failed_remove}`);
                                 }

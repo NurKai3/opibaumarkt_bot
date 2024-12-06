@@ -259,9 +259,7 @@ function createOPIBot() {
         if (discordRegex.test(message)) {
             console.log(`[DEBUG] Discord command detected from ${username}`);
             bot.chat(`/msg ${username} ${config.messages.discord || '[Bot] Kein Discord-Link konfiguriert.'}`);
-        } else {
-            bot.chat(`/msg ${username} ${config.messages.no_command}`)
-        }
+        } 
 
     });
     let lastBalance = 0; // Letzter bekannter Kontostand
@@ -309,9 +307,35 @@ function createOPIBot() {
     });
 
     // Verbindung trennen und erneut herstellen
-    bot.on('end', () => {
-        console.log('[BOT] Verbindung getrennt. Erneuter Versuch...');
-        setTimeout(createOPIBot, 5000);
+    bot.on('end', (reason) => {
+        console.log(`[BOT] Verbindung getrennt. Erneuter Versuch... Grund: ${reason}`);
+
+        // Unterscheiden Sie zwischen verschiedenen Trennungsgründen
+        if (reason === 'socketClosed') {
+            console.log('[BOT] Verbindung wurde aufgrund von socketClosed geschlossen.');
+        } else if (reason.includes('kicked')) {
+            console.log('[BOT] Der Bot wurde vom Server gekickt.');
+        } else {
+            console.log('[BOT] Unerwartete Trennung. Grund: ' + reason);
+        }
+        bot.quit(); // Aktuelle Verbindung sauber beenden
+
+        
+        setTimeout(createOPIBot, 10000);
+    });
+
+    bot.on('error', (err) => {
+        console.error('[BOT] Fehler aufgetreten:', err);
+        sendDiscordLog(`[BOT] Fehler aufgetreten: ${err.message}`, 'Fehler', 0xFF0000);
+    });
+    
+    // Kicks behandeln (falls vorhanden)
+    bot.on('kick', (reason, loggedIn) => {
+        console.log(`[BOT] Vom Server gekickt. Grund: ${JSON.stringify(reason)}. Eingeloggt: ${loggedIn}`);
+    });
+
+    bot.on('disconnect', (packet) => {
+        console.log('[BOT] Verbindung getrennt. Paket:', packet);
     });
 
     // Beenden-Handler

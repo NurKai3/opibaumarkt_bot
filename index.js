@@ -112,7 +112,7 @@ function createOPIBot() {
 
     bot.on('chat', (username, message) => {
         console.log(`[BOT] Chat von ${username}: ${message}`); // Debugging der eingehenden Nachricht
-    
+        
         // Entfernen des "Du: " Präfixes (falls vorhanden) und anderer unerwünschter Teile
         const cleanMessage = message.replace(/^[^\w]*Du:\s*/, '').trim();
         console.log(`[BOT] Bereinigte Nachricht: ${cleanMessage}`); // Debugging der bereinigten Nachricht
@@ -125,7 +125,7 @@ function createOPIBot() {
 
             if (tpaRegex.test(message)) {
                 bot.chat(`/tpa ${username}`);
-                if(message.includes('Dieser Spieler ist nicht auf CityBuild online.')) {
+                if(message2.includes('Dieser Spieler ist nicht auf CityBuild online.')) {
                     bot.chat(`/msg ${username} ${config.messages.player_not_online}`);
                 } else {
                     bot.chat(`/msg ${username} ${tpaMessage}`);
@@ -134,7 +134,7 @@ function createOPIBot() {
             }
 
             if (kontoRegex.test(message)) {
-                bot.chat(`/msg ${username} ${getBalance}`);
+                bot.chat(`/msg ${username} [Bot] Konto: ${lastBalance}`);
             }
 
             // Pay-Befehl
@@ -144,8 +144,8 @@ function createOPIBot() {
                 const amount = parseInt(payMatch[2]); // Betrag
                 console.log(`[BOT] !pay erkannt: Zielspieler - ${targetUsername}, Betrag - ${amount}`); // Debugging
 
-                //Message replace
-
+                //Message replac
+ 
 
                 const paymentPendingMessage = config.messages.payment_pending
                 .replace("${amount}", amount)       // Betrag ersetzen
@@ -259,9 +259,7 @@ function createOPIBot() {
         if (discordRegex.test(message)) {
             console.log(`[DEBUG] Discord command detected from ${username}`);
             bot.chat(`/msg ${username} ${config.messages.discord || '[Bot] Kein Discord-Link konfiguriert.'}`);
-        } else {
-            bot.chat(`/msg ${username} ${config.messages.no_command}`)
-        }
+        } 
 
     });
     let lastBalance = 0; // Letzter bekannter Kontostand
@@ -309,9 +307,35 @@ function createOPIBot() {
     });
 
     // Verbindung trennen und erneut herstellen
-    bot.on('end', () => {
-        console.log('[BOT] Verbindung getrennt. Erneuter Versuch...');
-        setTimeout(createOPIBot, 5000);
+    bot.on('end', (reason) => {
+        console.log(`[BOT] Verbindung getrennt. Erneuter Versuch... Grund: ${reason}`);
+
+        // Unterscheiden Sie zwischen verschiedenen Trennungsgründen
+        if (reason === 'socketClosed') {
+            console.log('[BOT] Verbindung wurde aufgrund von socketClosed geschlossen.');
+        } else if (reason.includes('kicked')) {
+            console.log('[BOT] Der Bot wurde vom Server gekickt.');
+        } else {
+            console.log('[BOT] Unerwartete Trennung. Grund: ' + reason);
+        }
+        bot.quit(); // Aktuelle Verbindung sauber beenden
+
+        
+        setTimeout(createOPIBot, 10000);
+    });
+
+    bot.on('error', (err) => {
+        console.error('[BOT] Fehler aufgetreten:', err);
+        sendDiscordLog(`[BOT] Fehler aufgetreten: ${err.message}`, 'Fehler', 0xFF0000);
+    });
+    
+    // Kicks behandeln (falls vorhanden)
+    bot.on('kick', (reason, loggedIn) => {
+        console.log(`[BOT] Vom Server gekickt. Grund: ${JSON.stringify(reason)}. Eingeloggt: ${loggedIn}`);
+    });
+
+    bot.on('disconnect', (packet) => {
+        console.log('[BOT] Verbindung getrennt. Paket:', packet);
     });
 
     // Beenden-Handler

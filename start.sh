@@ -8,4 +8,4 @@ echo "Installing dependencies..."
 npm install
 
 echo "Restarting AFK bot..."
-pm2 restart bot  # Stelle sicher, dass du PM2 benutzt, um den Bot zu verwalten
+pm2 restart OPIBot  # Stelle sicher, dass du PM2 benutzt, um den Bot zu verwalten

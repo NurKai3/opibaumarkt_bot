@@ -112,7 +112,7 @@ function createOPIBot() {
 
     bot.on('chat', (username, message) => {
         console.log(`[BOT] Chat von ${username}: ${message}`); // Debugging der eingehenden Nachricht
-    
+        
         // Entfernen des "Du: " Präfixes (falls vorhanden) und anderer unerwünschter Teile
         const cleanMessage = message.replace(/^[^\w]*Du:\s*/, '').trim();
         console.log(`[BOT] Bereinigte Nachricht: ${cleanMessage}`); // Debugging der bereinigten Nachricht
@@ -125,7 +125,7 @@ function createOPIBot() {
 
             if (tpaRegex.test(message)) {
                 bot.chat(`/tpa ${username}`);
-                if(message.includes('Dieser Spieler ist nicht auf CityBuild online.')) {
+                if(message2.includes('Dieser Spieler ist nicht auf CityBuild online.')) {
                     bot.chat(`/msg ${username} ${config.messages.player_not_online}`);
                 } else {
                     bot.chat(`/msg ${username} ${tpaMessage}`);
@@ -134,7 +134,7 @@ function createOPIBot() {
             }
 
             if (kontoRegex.test(message)) {
-                bot.chat(`/msg ${username} ${getBalance}`);
+                bot.chat(`/msg ${username} [Bot] Konto: ${lastBalance}`);
             }
 
             // Pay-Befehl
